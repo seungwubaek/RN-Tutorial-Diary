@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "RN-Tutorial-Diary",
+    "slug": "RN-Tutorial-Diary",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "RN-Tutorial-Diary"
+}
