@@ -1,21 +1,67 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { StatusBar, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import * as SplashScreen from 'expo-splash-screen';
+import { Realm } from '@realm/react';
+import { ThemeProvider } from 'styled-components/native';
+
+// Components
+import RootNavigator from '~/navigations/Root';
+
+// DB
+import { FeelingSchema } from '~/db/realm/schema';
+
+// Hooks
+import { useRealm } from './src/hooks/realm';
+
+// Styles
+import defaultTheme from '~/styles/theme';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [realm, setRealm] = useRealm();
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  useEffect(() => {
+    const startAppLoading = async () => {
+      const realm = await Realm.open({
+        path: 'diaryDB',
+        schema: [FeelingSchema],
+      });
+      setRealm(realm);
+    };
+    startAppLoading();
+  }, []);
+
+  // Final Loading Check
+  useEffect(() => {
+    if (realm) {
+      setAppIsReady(true);
+    }
+  }, [realm]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider theme={defaultTheme}>
+      <NavigationContainer>
+        <StatusBar
+          backgroundColor={defaultTheme.bgColor}
+          barStyle={'default'}
+        />
+        <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+          <RootNavigator />
+        </View>
+      </NavigationContainer>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
