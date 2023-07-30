@@ -12,8 +12,8 @@ import RootNavigator from '~/navigations/Root';
 // DB
 import { FeelingSchema } from '~/db/realm/schema';
 
-// Hooks
-import { useRealm } from './src/hooks/realm';
+// Contexts & Hooks
+import { RealmProvider } from '~/contexts/realm';
 
 // Styles
 import defaultTheme from '~/styles/theme';
@@ -22,7 +22,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [realm, setRealm] = useRealm();
+  const [realm, setRealm] = useState(null);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -30,6 +30,7 @@ export default function App() {
     }
   }, [appIsReady]);
 
+  // Loading
   useEffect(() => {
     const startAppLoading = async () => {
       const realm = await Realm.open({
@@ -55,10 +56,12 @@ export default function App() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <NavigationContainer>
-        <StatusBar style="auto" />
-        <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-          <RootNavigator />
-        </View>
+        <RealmProvider value={realm}>
+          <StatusBar style="auto" />
+          <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+            <RootNavigator />
+          </View>
+        </RealmProvider>
       </NavigationContainer>
     </ThemeProvider>
   );
