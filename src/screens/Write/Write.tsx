@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
-import { View, Alert } from 'react-native';
-import { setStatusBarBackgroundColor } from 'expo-status-bar';
+import React from 'react';
+import { Alert } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 
 // Styles
 import {
@@ -14,29 +14,51 @@ import {
   StTextEmotion,
 } from './Write.style';
 
+// Contexts & Hooks
+import { useRealm } from '~/contexts/realm';
+
+// Types
+import { RootStackScreenProps } from '~/types/react-navigations';
+
+SplashScreen.preventAutoHideAsync();
+
 const emotions = ['😊', '😐', '🥰', '🤩', '😡'];
 // const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
 
-const Write = () => {
+const Write: React.FC<RootStackScreenProps<'Write'>> = ({
+  navigation: { goBack },
+}) => {
   // States
   const [selectedEmotion, setSelectedEmotion] = React.useState<string>('');
   const [feelings, setFeelings] = React.useState<string>('');
+  const [realm] = useRealm();
 
-  console.log(selectedEmotion, feelings);
+  if (!realm) {
+    return null;
+  }
 
   // Functions
-  const onChangeFeelings = useCallback((text: string) => {
+  const onChangeFeelings = React.useCallback((text: string) => {
     setFeelings(text);
   }, []);
 
-  const onEmotionPress = useCallback((emotion: string) => {
+  const onEmotionPress = React.useCallback((emotion: string) => {
     setSelectedEmotion(emotion);
   }, []);
 
-  const onSubmit = useCallback(() => {
+  const onSubmit = React.useCallback(() => {
     if (feelings === '' || selectedEmotion === '') {
       return Alert.alert('', 'Please fill in all fields');
     }
+    realm.write(() => {
+      const feeling = realm.create('Feeling', {
+        _id: Date.now(),
+        emotion: selectedEmotion,
+        message: feelings,
+      });
+      console.log(feeling);
+      goBack();
+    });
   }, [feelings, selectedEmotion]);
 
   return (
