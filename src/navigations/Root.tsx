@@ -7,10 +7,13 @@ import Write from '~/screens/Write/Write';
 
 // Types
 import type { RootStackParamList } from '~/types/react-navigations';
+import { useTheme } from 'styled-components/native';
 
 const RootTabs = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
+  const theme = useTheme();
+
   return (
     <RootTabs.Navigator
       screenOptions={{
@@ -20,7 +23,17 @@ const RootNavigator = () => {
       }}
     >
       <RootTabs.Screen name="Home" component={Home} />
-      <RootTabs.Screen name="Write" component={Write} />
+      <RootTabs.Screen
+        name="Write"
+        component={Write}
+        options={{
+          title: 'New Diary',
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: theme.headerColor,
+          },
+        }}
+      />
     </RootTabs.Navigator>
   );
 };

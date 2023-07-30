@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { View, Alert } from 'react-native';
+import { setStatusBarBackgroundColor } from 'expo-status-bar';
 
 // Styles
 import {

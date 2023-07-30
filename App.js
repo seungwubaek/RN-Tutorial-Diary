@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StatusBar, View } from 'react-native';
+import { View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import { Realm } from '@realm/react';
@@ -54,10 +55,7 @@ export default function App() {
   return (
     <ThemeProvider theme={defaultTheme}>
       <NavigationContainer>
-        <StatusBar
-          backgroundColor={defaultTheme.bgColor}
-          barStyle={'default'}
-        />
+        <StatusBar style="auto" />
         <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
           <RootNavigator />
         </View>
