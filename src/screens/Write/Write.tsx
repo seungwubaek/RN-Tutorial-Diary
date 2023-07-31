@@ -2,6 +2,9 @@ import React from 'react';
 import { Alert } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 
+// DB
+import { useRealm } from '~/db/realm';
+
 // Styles
 import {
   StBtnSave,
@@ -13,9 +16,6 @@ import {
   StViewEmotions,
   StTextEmotion,
 } from './Write.style';
-
-// Contexts & Hooks
-import { useRealm } from '~/contexts/realm';
 
 // Types
 import { RootStackScreenProps } from '~/types/react-navigations';
@@ -31,7 +31,7 @@ const Write: React.FC<RootStackScreenProps<'Write'>> = ({
   // States
   const [selectedEmotion, setSelectedEmotion] = React.useState<string>('');
   const [feelings, setFeelings] = React.useState<string>('');
-  const [realm] = useRealm();
+  const realm = useRealm();
 
   if (!realm) {
     return null;

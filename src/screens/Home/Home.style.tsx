@@ -1,3 +1,4 @@
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 
 export const StView = styled.View`
@@ -11,6 +12,28 @@ export const StTextTitle = styled.Text`
   margin-bottom: 100px;
   color: ${({ theme }) => theme.textColor};
   font-size: 38px;
+`;
+
+export const StFlatListFeelings = styled.FlatList`` as typeof FlatList;
+
+export const StViewFlatListFeelingsSep = styled.View`
+  height: 10px;
+`;
+
+export const StViewRecordCard = styled.View`
+  background-color: ${({ theme }) => theme.cardColor};
+  flex-direction: row;
+  padding: 10px 10px;
+  border-radius: 10px;
+`;
+
+export const StTextEmotion = styled.Text`
+  font-size: 20px;
+  margin-right: 10px;
+`;
+
+export const StTextMessage = styled.Text`
+  font-size: 16px;
 `;
 
 export const StBtn = styled.TouchableOpacity`
@@ -31,8 +54,4 @@ export const StBtn = styled.TouchableOpacity`
   shadow-offset: 0px 5px;
   shadow-opacity: 0.34;
   shadow-radius: 6.27px;
-`;
-
-export const StBtnText = styled.Text`
-  color: ${({ theme }) => theme.btnTextColor};
 `;
