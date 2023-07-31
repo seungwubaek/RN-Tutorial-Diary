@@ -4,6 +4,7 @@
 
 * Realm from MongoDB
 * React Context
+* LayoutAnimation
 
 ## Realm from MongoDB
 
@@ -24,9 +25,11 @@ local nosql database
 Realm에 저장된 데이터 양이 방대할 때, Read에 렉이 걸린다면 어떻게해야할까? Loading Screen을 보여줘야하겠지.
 그런데 아직까지 그 과정을 구현할 수 있는 방법을 찾지 못했다.
 
-#### Try
+#### Try (Failed) - Async/Await for SplashScreen
 
 아래는 시도해보았으나 실패한 방식. React Native에서 실패했으며 React에서는 시도해보지 않았다.
+
+어쩌면, Async/Await가 필요한 위치는 `open()`이 아니라, Realm의 어떤 Connection이 만들어진 이후, `realm.objects()` 등의 Read 작업을 수행할 때일지도 모른다.
 
 * Entry Point (`App.tsx`)에서 Realm을 async/await 기법 `await Realm.open()` 으로 로드하고,
 * 해당 메소드가 완료되는 동안 Splash Screen을 띄움
@@ -73,6 +76,67 @@ const ArticlesScreen = () => {
     ...
   )
 ```
+
+### Simple Usage
+
+* `useRealm`
+* `realm.write`
+  * Write 작업은 항상 이 함수 아래에서 이루어져야 한다.
+  * `realm.create`
+  * `realm.objectForPrimaryKey`
+  * `realm.delete`
+
+```tsx
+// Home.tsx
+const Home: React.FC = () => {
+  const realm = useRealm();
+  const [feelings, setFeelings] = React.useState<Realm.Results<Feeling>>();
+
+  React.useEffect(() => {
+    const feelings = realm.objects('Feeling') as Realm.Results<Feeling>;
+    feelings.addListener((feelings, changes) => {
+      setFeelings(feelings.sorted('_id', true));
+    });
+    return () => {
+      feelings.removeAllListeners();
+    };
+  }, []);
+
+  const onPress = React.useCallback((item: Feeling) => {
+    realm.write(() => {
+      const feeling = realm.objectForPrimaryKey('Feeling', item._id);
+      realm.delete(feeling);
+    });
+  }, []);
+
+  return (
+    ...
+  )
+}
+
+// Write.tsx
+const Write: React.FC = () => {
+  const realm = useRealm();
+
+  ...
+
+  realm.write(() => {
+    const feeling = realm.create('Feeling', {
+      _id: Date.now(),
+      emotion: selectedEmotion,
+      message: feelings,
+    });
+    console.log(feeling);
+    goBack();
+  });
+}
+```
+
+### Legacy Method (?)
+
+아래 [React Context](#react-context) 섹션의 Example code는 Custom Context/Hook을 이용해 Realm을 사용하고 있는데, 이 방식은 Realm이 아직 React를 support 하지 않을 때의 방식이다.
+
+지금은 Realm에서 지원하는 Context/Hook API가 있으므로 해당 APIs를 이용하자. 다만 [Realm Provider](#realmprovider) 섹션의 [Try (Failed) - Async/Await for SplashScreen](#try-failed---asyncawait-for-splashscreen)의 내용과 같이 Loading Screen을 띄우는 방법에 대한 조사가 필요하다.
 
 ## React Context
 
@@ -142,4 +206,41 @@ export default function App() {
     </RealmProvider>
   )
 }
+```
+
+## LayoutAnimation
+
+LayoutAnimation은 State에 변화로 View의 Layout이 변할 때, 변화 애니메이션을 아주 간단히 구현할 수 있도록 해준다.
+
+<https://reactnative.dev/docs/layoutanimation>
+
+### Only Android
+
+Android에서는 기본적으로 LayoutAnimation이 적용되지 않는다. 따라서 아래와 같이 앱 Entry Point에서 `UIManager`를 통해 LayoutAnimation을 적용해야 한다.
+
+```tsx
+// App.tsx
+if (
+  Platform.OS === 'android' &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+```
+
+### Usage
+
+`setState` 호출 전에 다음과 같은 코드로 애니메이션을 적용한다.
+
+```tsx
+React.useEffect(() => {
+  const feelings = realm.objects('Feeling') as Realm.Results<Feeling>;
+  feelings.addListener((feelings, changes) => {
+    LayoutAnimation.spring();  // 이 한줄이면 끝
+    setFeelings(feelings.sorted('_id', true));
+  });
+  return () => {
+    feelings.removeAllListeners();
+  };
+}, []);
 ```
