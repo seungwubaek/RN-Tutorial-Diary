@@ -20,6 +20,8 @@ export const StViewFlatListFeelingsSep = styled.View`
   height: 10px;
 `;
 
+export const StBtnRecordCard = styled.TouchableOpacity``;
+
 export const StViewRecordCard = styled.View`
   background-color: ${({ theme }) => theme.cardColor};
   flex-direction: row;

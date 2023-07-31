@@ -1,9 +1,11 @@
 import React from 'react';
+import { LayoutAnimation } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 
 // Styles
 import {
   StBtn,
+  StBtnRecordCard,
   StFlatListFeelings,
   StTextEmotion,
   StTextMessage,
@@ -28,13 +30,20 @@ const Home: React.FC<RootStackScreenProps<'Home'>> = ({
 
   React.useEffect(() => {
     const feelings = realm.objects('Feeling') as Realm.Results<Feeling>;
-    feelings.addListener(() => {
-      const feelings = realm.objects('Feeling') as Realm.Results<Feeling>;
-      setFeelings(feelings);
+    feelings.addListener((feelings, changes) => {
+      LayoutAnimation.spring();
+      setFeelings(feelings.sorted('_id', true));
     });
     return () => {
       feelings.removeAllListeners();
     };
+  }, []);
+
+  const onPress = React.useCallback((item: Feeling) => {
+    realm.write(() => {
+      const feeling = realm.objectForPrimaryKey('Feeling', item._id);
+      realm.delete(feeling);
+    });
   }, []);
 
   return (
@@ -45,10 +54,12 @@ const Home: React.FC<RootStackScreenProps<'Home'>> = ({
         data={feelings}
         keyExtractor={(item) => item._id.toString()}
         renderItem={({ item }) => (
-          <StViewRecordCard>
-            <StTextEmotion>{item.emotion}</StTextEmotion>
-            <StTextMessage>{item.message}</StTextMessage>
-          </StViewRecordCard>
+          <StBtnRecordCard onPress={() => onPress(item)}>
+            <StViewRecordCard>
+              <StTextEmotion>{item.emotion}</StTextEmotion>
+              <StTextMessage>{item.message}</StTextMessage>
+            </StViewRecordCard>
+          </StBtnRecordCard>
         )}
       />
       <StBtn onPress={() => navigate('Write')}>

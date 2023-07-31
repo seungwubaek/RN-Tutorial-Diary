@@ -22,8 +22,7 @@ import { RootStackScreenProps } from '~/types/react-navigations';
 
 SplashScreen.preventAutoHideAsync();
 
-const emotions = ['😊', '😐', '🥰', '🤩', '😡'];
-// const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
+const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
 
 const Write: React.FC<RootStackScreenProps<'Write'>> = ({
   navigation: { goBack },
