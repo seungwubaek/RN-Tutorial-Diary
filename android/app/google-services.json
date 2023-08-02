@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "570022157474",
+    "project_id": "simple-diary-37216",
+    "storage_bucket": "simple-diary-37216.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570022157474:android:0b16c5a1bbf744df6d4bfb",
+        "android_client_info": {
+          "package_name": "com.rntutorialdiary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "570022157474-joas7eqvt27tssjr8clvgqsfujaef0n4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.rntutorialdiary",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "570022157474-c40d9j867qvbtk0slnl6l3n0252olota.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoBxJO5MtMMKt7z_fPmZuLw1DCT_Il3Bc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "570022157474-c40d9j867qvbtk0slnl6l3n0252olota.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

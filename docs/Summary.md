@@ -5,6 +5,8 @@
 * Realm from MongoDB
 * React Context
 * LayoutAnimation
+* AdMob
+* Firebase (강의 내용 아님)
 
 ## Realm from MongoDB
 
@@ -244,3 +246,88 @@ React.useEffect(() => {
   };
 }, []);
 ```
+
+## AdMob
+
+* BannerAd
+* InterstitialAd
+* RewardedAd
+  * 선택형, 전체화면 츨력형
+
+### Platform Compatibility
+
+Ad Unit Id를 Platform에 따라 다르게 설정하기. Platform에 따라 앱이 다르며 광고도 다르기 때문이다.
+
+```tsx
+import { Platform } from 'react-native';
+
+const adUnitId = Platform.select({
+  android: 'ca-app-pub-aaaaaaaaaaaaaaaa/bbbbbbbbbb',
+  ios: 'ca-app-pub-xxxxxxxxxxxxxxxx/yyyyyyyyyy',
+});
+```
+
+### Android Simulator에서 TestIds를 사용하려는데 `BannerAd`가 안보여요
+
+`TestIds`를 이용해서 `BannerAd` 컴포넌트를 테스트 할 때는 `requestOptions` 중 `requestNonPersonalizedAdsOnly`를 `true`로 설정해야 한다.
+
+```tsx
+<BannerAd
+  unitId={TestIds.BANNER}
+  size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+  requestOptions={{
+    requestNonPersonalizedAdsOnly: true,
+  }}
+/>
+```
+
+## Firebase
+
+Firebase로 차후 앱 기능 고도화 뿐만 아니라, Firebase를 이용한 Google AdMob & Analytics 연동 체인을 구성하자.
+
+이건 튜토리얼 강의에 포함된 내용이 아님. 아래 방식은 2023. 08. 02 기준.
+
+최신 가이드는 "Firebase > 프로젝트 > 앱 추가(Android or iOS or ...)" 과정의 가이드를 확인하자.
+
+### Installation
+
+* "Firebase > 프로젝트 > 앱 추가(Android or iOS or ...)" 과정의 가이드 따라가기
+
+  * `google-services.json` 파일 추가
+    * Android의 경우 `android/app` 폴더에 추가
+
+  * 프로젝트 gradle 설정 추가
+
+    ```gradle
+    buildscript {
+      dependencies {
+        classpath 'com.google.gms:google-services:4.3.15'
+      }
+    }
+    ```
+
+  * 앱 gradle 설정 추가
+
+    ```gradle
+    apply plugin: 'com.google.gms.google-services'
+
+    dependencies {
+      implementation platform('com.google.firebase:firebase-bom:32.2.1')
+      implementation 'com.google.firebase:firebase-analytics'
+    }
+    ```
+
+  * AdMob 연동
+    * AdMob > 설정 > 연결된 서비스 > 앱 연결 관리 섹션
+      * 테이블의 `Firebase` 컬럼의 드롭다운 화살표 클릭 후 지시대로 진행
+
+* React Native Firebase 패키지 설치
+
+  * `npm i @react-native-firebase/app`
+    * 또는 `yarn add @react-native-firebase/app`
+    * iOS의 경우 `pod install` 등 추가 작업 필요
+
+  * 필요한 패키지 추가 인스톨
+    * `npm i @react-native-firebase/analytics` 등
+
+* `npm run android` or `npm run ios`로 Re-Build

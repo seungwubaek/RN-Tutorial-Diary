@@ -3,9 +3,11 @@
     "name": "RN-Tutorial-Diary",
     "slug": "RN-Tutorial-Diary",
     "version": "1.0.0",
-    "assetBundlePatterns": [
-      "**/*"
-    ]
+    "assetBundlePatterns": ["**/*"]
   },
-  "name": "RN-Tutorial-Diary"
+  "name": "RN-Tutorial-Diary",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-9480069633849139~4081647675",
+    "ios_app_id": "ca-app-pub-9480069633849139~4081647675"
+  }
 }

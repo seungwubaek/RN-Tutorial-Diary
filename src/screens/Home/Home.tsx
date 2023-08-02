@@ -1,6 +1,11 @@
 import React from 'react';
 import { LayoutAnimation } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 
 // Styles
 import {
@@ -21,6 +26,11 @@ import { Feeling } from '~/db/realm/models';
 
 // Types
 import type { RootStackScreenProps } from '~/types/react-navigations';
+
+// Ads
+const adUnitId = __DEV__
+  ? TestIds.BANNER
+  : 'ca-app-pub-9480069633849139/1340536908';
 
 const Home: React.FC<RootStackScreenProps<'Home'>> = ({
   navigation: { navigate },
@@ -49,6 +59,13 @@ const Home: React.FC<RootStackScreenProps<'Home'>> = ({
   return (
     <StView>
       <StTextTitle>My Journal</StTextTitle>
+      <BannerAd
+        unitId={adUnitId}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        requestOptions={{
+          requestNonPersonalizedAdsOnly: true,
+        }}
+      />
       <StFlatListFeelings
         ItemSeparatorComponent={StViewFlatListFeelingsSep}
         data={feelings}

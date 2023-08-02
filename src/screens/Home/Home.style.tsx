@@ -6,15 +6,21 @@ export const StView = styled.View`
   padding: 0 30px;
   padding-top: 50px;
   background-color: ${({ theme }) => theme.bgColor};
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 export const StTextTitle = styled.Text`
-  margin-bottom: 100px;
+  width: 100%;
   color: ${({ theme }) => theme.textColor};
   font-size: 38px;
+  margin-bottom: 20px;
 `;
 
-export const StFlatListFeelings = styled.FlatList`` as typeof FlatList;
+export const StFlatListFeelings = styled.FlatList`
+  width: 100%;
+  margin-top: 20px;
+` as typeof FlatList;
 
 export const StViewFlatListFeelingsSep = styled.View`
   height: 10px;

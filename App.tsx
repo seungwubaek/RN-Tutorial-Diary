@@ -3,6 +3,7 @@ import { Platform, UIManager, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
+import { MobileAds } from 'react-native-google-mobile-ads';
 import { ThemeProvider } from 'styled-components/native';
 
 // Components
@@ -25,6 +26,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = React.useState(false);
+  const [adMobIsReady, setAdMobIsReady] = React.useState(false);
 
   const onLayoutRootView = React.useCallback(async () => {
     if (appIsReady) {
@@ -32,11 +34,24 @@ export default function App() {
     }
   }, [appIsReady]);
 
+  // Load AdMob
+  React.useEffect(() => {
+    // mobileAds()
+    MobileAds()
+      .initialize()
+      .then((adapterStatuses) => {
+        console.log('Ad Statuses:', adapterStatuses);
+        setAdMobIsReady(true);
+      });
+  }, []);
+
   // Final Loading Check
   React.useEffect(() => {
     // Do final loading check stuff
-    setAppIsReady(true);
-  }, []);
+    if (adMobIsReady) {
+      setAppIsReady(true);
+    }
+  }, [adMobIsReady]);
 
   if (!appIsReady) {
     return null;

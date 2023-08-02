@@ -8,6 +8,7 @@ const defaultTheme: DefaultTheme = {
   cardColor: '#f7f1e3',
   btnColor: '#706fd3',
   btnTextColor: '#f7f1e3',
+  borderColor: '#5e5e5e',
 };
 
 export default defaultTheme;
