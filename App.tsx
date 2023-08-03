@@ -7,6 +7,7 @@ import { MobileAds } from 'react-native-google-mobile-ads';
 import { ThemeProvider } from 'styled-components/native';
 
 // Components
+import Loading, { LoadingProvider } from '~/components/molecules/Loading';
 import RootNavigator from '~/navigations/Root';
 
 // DB
@@ -53,19 +54,18 @@ export default function App() {
     }
   }, [adMobIsReady]);
 
-  if (!appIsReady) {
-    return null;
-  }
-
   return (
     <RealmProvider>
       <ThemeProvider theme={defaultTheme}>
-        <NavigationContainer>
-          <StatusBar style="auto" />
-          <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
-            <RootNavigator />
-          </View>
-        </NavigationContainer>
+        <LoadingProvider>
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <Loading />
+            <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+              <RootNavigator />
+            </View>
+          </NavigationContainer>
+        </LoadingProvider>
       </ThemeProvider>
     </RealmProvider>
   );

@@ -26,23 +26,35 @@ export const StViewFlatListFeelingsSep = styled.View`
   height: 10px;
 `;
 
-export const StBtnRecordCard = styled.TouchableOpacity``;
-
 export const StViewRecordCard = styled.View`
   background-color: ${({ theme }) => theme.cardColor};
   flex-direction: row;
+  justify-content: space-between;
   padding: 10px 10px;
   border-radius: 10px;
 `;
 
+export const StViewCardContent = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
 export const StTextEmotion = styled.Text`
-  font-size: 20px;
+  font-size: 18px;
   margin-right: 10px;
 `;
 
 export const StTextMessage = styled.Text`
-  font-size: 16px;
+  font-size: 14px;
 `;
+
+export const StViewCardBtnSet = styled.View`
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+`;
+
+export const StBtnCardBtnWrapper = styled.TouchableOpacity``;
 
 export const StBtn = styled.TouchableOpacity`
   position: absolute;

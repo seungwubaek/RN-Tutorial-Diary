@@ -1,38 +1,48 @@
 import React from 'react';
 import { Alert } from 'react-native';
+import { styled } from 'styled-components/native';
+
+// Components
+import { useLoading } from '~/components/molecules/Loading';
 
 // DB
 import { useRealm } from '~/db/realm';
 
 // Styles
 import {
+  StBtnEmotion,
   StBtnSave,
   StBtnSaveText,
-  StBtnEmotion,
-  StTextInput,
   StTextTitle,
+  StTextEmotion,
+  StTextInput,
   StView,
   StViewEmotions,
-  StTextEmotion,
-} from './Write.style';
+} from '~/screens/Write/Write.style';
+
+const StTextModifyTitle = styled(StTextTitle)`
+  font-size: 20px;
+`;
 
 // Types
 import { RootStackScreenProps } from '~/types/react-navigations';
 
 // Emotions
-export const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
+import { emotions } from '~/screens/Write/Write';
+import { Feeling } from '~/db/realm/models';
 
-// Main
-const Write: React.FC<RootStackScreenProps<'Write'>> = ({
+const Modify: React.FC<RootStackScreenProps<'Modify'>> = ({
+  route: { params },
   navigation: { goBack },
 }) => {
   // States & Hooks
+  const { show, hide } = useLoading();
   const realm = useRealm();
   const [selectedEmotion, setSelectedEmotion] = React.useState<string>('');
-  const [feelings, setFeelings] = React.useState<string>('');
+  const [feelingMsg, setFeelingMsg] = React.useState<string>('');
 
   const onChangeFeelings = React.useCallback((text: string) => {
-    setFeelings(text);
+    setFeelingMsg(text);
   }, []);
 
   const onEmotionPress = React.useCallback((emotion: string) => {
@@ -40,22 +50,33 @@ const Write: React.FC<RootStackScreenProps<'Write'>> = ({
   }, []);
 
   const onSubmit = React.useCallback(() => {
-    if (feelings === '' || selectedEmotion === '') {
+    if (feelingMsg === '' || selectedEmotion === '') {
       return Alert.alert('', 'Please fill in all fields');
     }
     realm.write(() => {
-      const feeling = realm.create('Feeling', {
-        _id: Date.now(),
-        emotion: selectedEmotion,
-        message: feelings,
-      });
-      goBack();
+      const item = params.item;
+      const feeling = realm.objectForPrimaryKey<Feeling>('Feeling', item._id);
+      if (!feeling) return;
+      feeling.emotion = selectedEmotion;
+      feeling.message = feelingMsg;
     });
-  }, [realm, selectedEmotion, feelings, goBack]);
+    goBack();
+  }, [feelingMsg, selectedEmotion, realm, params, goBack]);
+
+  React.useEffect(() => {
+    const { item } = params;
+    console.log(item);
+    setSelectedEmotion(item.emotion);
+    setFeelingMsg(item.message);
+  }, []);
 
   return (
     <StView>
-      <StTextTitle>How do you feel today?</StTextTitle>
+      <StTextModifyTitle>
+        {new Date(params.item._id).toLocaleString('ko-KR', {
+          timeZone: 'Asia/Seoul',
+        })}
+      </StTextModifyTitle>
       <StViewEmotions>
         {emotions.map((emotion, index) => (
           <StBtnEmotion
@@ -68,7 +89,7 @@ const Write: React.FC<RootStackScreenProps<'Write'>> = ({
         ))}
       </StViewEmotions>
       <StTextInput
-        value={feelings}
+        value={feelingMsg}
         placeholder="Write your feelings..."
         // multiline
         returnKeyType="done"
@@ -82,4 +103,4 @@ const Write: React.FC<RootStackScreenProps<'Write'>> = ({
   );
 };
 
-export default Write;
+export default Modify;

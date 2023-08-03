@@ -2,8 +2,9 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 // Components
-import Home from '~/screens/Home/Home';
-import Write from '~/screens/Write/Write';
+import Home from '~/screens/Home';
+import Write from '~/screens/Write';
+import Modify from '~/screens/Modify';
 
 // Types
 import type { RootStackParamList } from '~/types/react-navigations';
@@ -28,6 +29,17 @@ const RootNavigator = () => {
         component={Write}
         options={{
           title: 'New Diary',
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: theme.headerColor,
+          },
+        }}
+      />
+      <RootTabs.Screen
+        name="Modify"
+        component={Modify}
+        options={{
+          title: 'Modify Diary',
           headerShown: true,
           headerStyle: {
             backgroundColor: theme.headerColor,
