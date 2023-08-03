@@ -2,7 +2,15 @@
 
 ## Layout Animation not showing
 
-### 1. Layout Animation이 작동하는 동시에 또다른 re-rendering이 발생하는 경우
+### 1. 맨 처음 앱을 실행했을 때 Layout Animation이 작동하지 않는 경우
+
+앱을 처음 실행했을때에만 Home 화면 feelings `FlatList`의 Layout Animation이 작동하지 않는다.
+
+Metro Server에서 Reload 했을때는 Layout Animation이 정상적으로 작동한다.
+
+Simulator에서만 발생하는 문제일 것이라는 추측을 하고 있다. 실제 기기에서 테스트 후 내용 업데이트가 필요하다.
+
+### 2. Layout Animation이 작동하는 동시에 또다른 re-rendering이 발생하는 경우
 
 Layout Animation이 재생되는 순간, 또다른 `setState`에 의해 re-render가 호출되면 Layout Animation이 작동하지 않는다.
 
@@ -67,7 +75,9 @@ React.useEffect(() => {
 
 ```
 
-### 2. Simulator 환경에서 잘 작동하지 않는 경우
+### 3. 새 Diary를 작성하고 Home으로 돌아갔을때 feeling FlatList의 Layout Animation이 재생되지 않는 경우
+
+이 문제는 Simulator 환경에서만 발생하는 문제로 추정되며, 실제 기기에서 테스트 후 내용 업데이트가 필요하다.
 
 Layout Animation이 재생하는 시점에 활성화된 키보드가 비활성화되는 애니메이션(키보드가 내려가는 애니메이션)이 동시에 발생하면 Layout Animation이 재생되지 않는다.
 
@@ -82,8 +92,6 @@ Layout Animation이 재생하는 시점에 활성화된 키보드가 비활성�
     * Layout Animation의 재생 시점이 키보드 비활성화 애니메이션의 재생 시간대와 겹치는 상황 발생
 
 #### 해결 방법
-
-Simulator 환경에서만 발생하는 문제로 추정되며, 실제 기기에서 테스트 후 내용 업데이트가 필요하다.
 
 임시로, 위 과정에서 `TextInput`에 입력을 완료한 다음, 키보드를 수동으로 비활성화(내려가는 애니메이션 재생)하자.
 
