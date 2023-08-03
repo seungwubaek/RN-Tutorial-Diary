@@ -4,7 +4,7 @@
 
 * Realm from MongoDB
 * React Context
-* LayoutAnimation
+* Layout Animation
 * AdMob
 * Firebase (강의 내용 아님)
 
@@ -210,9 +210,9 @@ export default function App() {
 }
 ```
 
-## LayoutAnimation
+## Layout Animation
 
-LayoutAnimation은 State에 변화로 View의 Layout이 변할 때, 변화 애니메이션을 아주 간단히 구현할 수 있도록 해준다.
+React Native의 Layout Animation은 State에 변화로 View의 Layout이 변할 때, 변화 애니메이션을 아주 간단히 구현할 수 있도록 해준다.
 
 <https://reactnative.dev/docs/layoutanimation>
 
