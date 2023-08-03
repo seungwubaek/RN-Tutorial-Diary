@@ -2,10 +2,8 @@ import React from 'react';
 import { Alert } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import {
-  AdEventType,
-  RewardedInterstitialAd,
-  RewardedAdEventType,
   TestIds,
+  useRewardedInterstitialAd,
 } from 'react-native-google-mobile-ads';
 
 // Components
@@ -36,17 +34,6 @@ const adUnitId = __DEV__
   ? TestIds.REWARDED_INTERSTITIAL
   : 'ca-app-pub-9480069633849139/8179130192';
 
-const rewardedInterstitialAd = RewardedInterstitialAd.createForAdRequest(
-  adUnitId,
-  {
-    requestNonPersonalizedAdsOnly: true,
-    serverSideVerificationOptions: {
-      userId: 'test_user',
-      customData: JSON.stringify({ data: 'something' }),
-    },
-  }
-);
-
 // Emotions
 const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
 
@@ -54,9 +41,16 @@ const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
 const Write: React.FC<RootStackScreenProps<'Write'>> = ({
   navigation: { goBack },
 }) => {
-  // States
-  const [adLoaded, setAdLoaded] = React.useState<boolean>(false);
-  const [rewardEarned, setRewardEarned] = React.useState<boolean>(false);
+  // States & Hooks
+  const {
+    isLoaded: isLoadedRewardAdForSave,
+    isEarnedReward: isEarnedRewardRewardAdForSave,
+    isClosed: isClosedRewardAdForSave,
+    load: loadRewardAdForSave,
+    show: showRewardAdForSave,
+  } = useRewardedInterstitialAd(adUnitId, {
+    requestNonPersonalizedAdsOnly: true,
+  });
   const [selectedEmotion, setSelectedEmotion] = React.useState<string>('');
   const [feelings, setFeelings] = React.useState<string>('');
   const realm = useRealm();
@@ -73,49 +67,30 @@ const Write: React.FC<RootStackScreenProps<'Write'>> = ({
     if (feelings === '' || selectedEmotion === '') {
       return Alert.alert('', 'Please fill in all fields');
     }
-    rewardedInterstitialAd.show();
-  }, [selectedEmotion, feelings]);
+    showRewardAdForSave();
+  }, [selectedEmotion, feelings, showRewardAdForSave]);
 
   React.useEffect(() => {
-    const unsubscribeAfterLoad = rewardedInterstitialAd.addAdEventListener(
-      RewardedAdEventType.LOADED,
-      () => {
-        setAdLoaded(true);
-      }
-    );
-    const unsubscribeAfterReward = rewardedInterstitialAd.addAdEventListener(
-      RewardedAdEventType.EARNED_REWARD,
-      (reward) => {
-        setRewardEarned(true);
-      }
-    );
-    rewardedInterstitialAd.load();
-    return () => {
-      unsubscribeAfterLoad();
-      unsubscribeAfterReward();
-    };
-  }, []);
+    loadRewardAdForSave();
+  }, [loadRewardAdForSave]);
 
   React.useEffect(() => {
-    const unsubscribeAfterClose = rewardedInterstitialAd.addAdEventListener(
-      AdEventType.CLOSED,
-      () => {
-        if (rewardEarned) {
-          realm.write(() => {
-            const feeling = realm.create('Feeling', {
-              _id: Date.now(),
-              emotion: selectedEmotion,
-              message: feelings,
-            });
-            goBack();
-          });
-        }
-      }
-    );
-    return unsubscribeAfterClose;
-  }, [rewardEarned]);
+    if (isEarnedRewardRewardAdForSave && isClosedRewardAdForSave) {
+      realm.write(() => {
+        const feeling = realm.create('Feeling', {
+          _id: Date.now(),
+          emotion: selectedEmotion,
+          message: feelings,
+        });
+        goBack();
+      });
+    }
+    // 본 useEffect의 dependency에 selectedEmotion, feelings는 넣지 않는다.
+    // isEarnedRewardRewardAdForSave와 isClosedRewardAdForSave가 변경되어 본 useEffect가 실행돼야하는 시점에는
+    // 이미 selectedEmotion과 feelings의 값이 수정 완료된 시점이기 때문이다.
+  }, [isEarnedRewardRewardAdForSave, isClosedRewardAdForSave]);
 
-  if (!adLoaded || !realm) {
+  if (!isLoadedRewardAdForSave || !realm) {
     return <Loading />;
   }
 
