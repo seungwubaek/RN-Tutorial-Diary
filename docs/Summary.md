@@ -271,6 +271,8 @@ const adUnitId = Platform.select({
 
 `TestIds`를 이용해서 `BannerAd` 컴포넌트를 테스트 할 때는 `requestOptions` 중 `requestNonPersonalizedAdsOnly`를 `true`로 설정해야 한다.
 
+테스트가 아닐 때는 의도한 것이 아니라면 까먹지 말고 `false`로 설정하자!
+
 ```tsx
 <BannerAd
   unitId={TestIds.BANNER}
