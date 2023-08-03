@@ -1,6 +1,5 @@
 import React from 'react';
 import { Alert } from 'react-native';
-import * as SplashScreen from 'expo-splash-screen';
 import {
   TestIds,
   useRewardedInterstitialAd,
@@ -26,8 +25,6 @@ import {
 
 // Types
 import { RootStackScreenProps } from '~/types/react-navigations';
-
-SplashScreen.preventAutoHideAsync();
 
 // Ads
 const adUnitId = __DEV__
