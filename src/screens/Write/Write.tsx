@@ -27,9 +27,7 @@ import {
 import { RootStackScreenProps } from '~/types/react-navigations';
 
 // Ads
-const adUnitId = __DEV__
-  ? TestIds.REWARDED_INTERSTITIAL
-  : 'ca-app-pub-9480069633849139/8179130192';
+const adUnitId = TestIds.REWARDED_INTERSTITIAL;
 
 // Emotions
 const emotions = ['😊', '😐', '🥰', '🤩', '😭', '😡'];
