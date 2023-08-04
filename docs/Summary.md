@@ -249,10 +249,120 @@ React.useEffect(() => {
 
 ## AdMob
 
+React Native에서 React Native Google Mobile Ads 패키지를 사용하해서 AdMob을 구현한다.
+
 * BannerAd
 * InterstitialAd
 * RewardedAd
   * 선택형, 전체화면 츨력형
+
+### Installation
+
+공신문서 중 패키지를 설치하고 사용할 때 SDK Initialization이 필요하다고 한다.
+
+<https://docs.page/invertase/react-native-google-mobile-ads#initialize-the-google-mobile-ads-sdk>
+
+그러나 Build한 APK를 Real Device에서 테스트 해 본 결과, 이 과정을 생략해도 광고가 나온다; 아마도 자동으로 초기화되는 것 같다.
+
+그래도 명시적으로 적어주긴하자.
+
+#### 앱 시작할 때 SDK Initialization을 기다리지 말자
+
+아래 코드는 앱이 시작(launch) 할 때 **Splash Screen**을 Hide 시키기 위해 SDK Initialization의 완료를 기다리는 코드이다.
+
+Build한 APK를 Real Device에서 테스트한 결과, 왠지 모르겠는데 Hide가 안된다.
+
+```tsx
+export default function App() {
+  const [appIsReady, setAppIsReady] = React.useState(false);
+  const [adMobIsReady, setAdMobIsReady] = React.useState(false);
+
+  const onLayoutRootView = React.useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  // Load AdMob
+  React.useEffect(() => {
+    MobileAds()
+      .initialize()
+      .then((adapterStatuses) => {
+        console.log('Ad Statuses:', adapterStatuses);
+        setAdMobIsReady(true);
+      });
+  }, []);
+
+  React.useEffect(() => {
+    // 바로 아래 과정이 진행이 안된다는 뜻
+    if (adMobIsReady) {
+      setAppIsReady(true);
+    }
+  }, [adMobIsReady]);
+
+return (
+    <RealmProvider>
+      <ThemeProvider theme={defaultTheme}>
+        <LoadingProvider>
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <Loading />
+            <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+              <RootNavigator />
+            </View>
+          </NavigationContainer>
+        </LoadingProvider>
+      </ThemeProvider>
+    </RealmProvider>
+  );
+}
+```
+
+### Real Device Test
+
+AdMob은 Expo Go 사용 불가하다. 따라서 Expo Go를 이용해서 실제 Device에서 테스트하려고 하면 다음과 같은 에러가 난다.
+
+```bash
+Invariant Violation: TurboModuleRegistry.getEnforcing(...): 'RNGoogleMobileAdsModule' could not be found.
+```
+
+이 에러는 React Native Google Mobile Ads Github Issue <https://github.com/invertase/react-native-google-mobile-ads/issues/424>에서도 찾아 볼 수 있다.
+
+### 해결
+
+에러의 내용이나, 이슈의 Comment에서 알 수 있듯, AdMob을 Real Device에서 사용하려면 Build를 해야 한다.
+
+Build를 통해 APK를 생성하고 생성한 APK를 Real Device에서 실행시키는 것으로 테스트 해볼 수 있다.
+
+EAS를 사용하고 있기 때문에 아래와 같은 설정을 거친 후 Build 하자.
+
+자세한 내용은 공식 문서 <https://docs.expo.dev/build-reference/apk/> 참고
+
+* Build 설정
+  * APK로 빌드하기 설정
+
+```js
+{
+  ...,
+  "build": {
+    ...,
+    "preview-apk": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    ...
+  },
+  ...
+}
+```
+
+* Build 수행
+
+```bash
+eas build -p android --profile preview-apk
+```
 
 ### Platform Compatibility
 

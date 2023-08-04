@@ -77,7 +77,9 @@ React.useEffect(() => {
 
 ### 3. 새 Diary를 작성하고 Home으로 돌아갔을때 feeling FlatList의 Layout Animation이 재생되지 않는 경우
 
-이 문제는 Simulator 환경에서만 발생하는 문제로 추정되며, 실제 기기에서 테스트 후 내용 업데이트가 필요하다.
+이 문제는 Simulator 환경에서만 발생하는 문제이다. 그래픽 구현 성능에 좌우되는 것으로 추정한다.
+
+EAS를 이용해 APK로 빌드(`eas build -p android --profile preview-apk`)한 앱을 실제 기기에서 실행시키면 문제없이 재생된다.
 
 Layout Animation이 재생하는 시점에 활성화된 키보드가 비활성화되는 애니메이션(키보드가 내려가는 애니메이션)이 동시에 발생하면 Layout Animation이 재생되지 않는다.
 
