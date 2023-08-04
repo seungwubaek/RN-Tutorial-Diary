@@ -27,7 +27,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const [adMobIsReady, setAdMobIsReady] = React.useState(false);
 
   const onLayoutRootView = React.useCallback(async () => {
     if (appIsReady) {
@@ -37,22 +36,18 @@ export default function App() {
 
   // Load AdMob
   React.useEffect(() => {
-    // mobileAds()
     MobileAds()
       .initialize()
       .then((adapterStatuses) => {
         console.log('Ad Statuses:', adapterStatuses);
-        setAdMobIsReady(true);
       });
   }, []);
 
   // Final Loading Check
   React.useEffect(() => {
     // Do final loading check stuff
-    if (adMobIsReady) {
-      setAppIsReady(true);
-    }
-  }, [adMobIsReady]);
+    setAppIsReady(true);
+  }, []);
 
   return (
     <RealmProvider>
