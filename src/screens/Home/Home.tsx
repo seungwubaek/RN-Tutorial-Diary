@@ -35,8 +35,12 @@ import type { RootStackScreenProps } from '~/types/react-navigations';
 type EditMode = 'modify' | 'delete' | null;
 
 // Ads
-const bannerAdUnitId = TestIds.BANNER;
-const rewardAdUnitIdForEdit = TestIds.REWARDED_INTERSTITIAL;
+const bannerAdUnitId = __DEV__
+  ? TestIds.BANNER
+  : 'ca-app-pub-9480069633849139/1340536908';
+const rewardAdUnitIdForEdit = __DEV__
+  ? TestIds.REWARDED_INTERSTITIAL
+  : 'ca-app-pub-9480069633849139/6642439827';
 
 const Home: React.FC<RootStackScreenProps<'Home'>> = ({
   navigation: { navigate },
