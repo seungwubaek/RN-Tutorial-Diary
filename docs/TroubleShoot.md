@@ -200,3 +200,95 @@ export default function App() {
   );
 }
 ```
+
+### Solved 코드 2
+
+아래처럼 `LoadingProvider` 내부에 있던 컴포넌트 `<LoadingIndicator>`를 `LoadingProvider` 외부로 분리해도 마찬가지로 렌더링 위치는 `<View onLayout...` 컴포넌트 내부여야 한다.
+
+```tsx
+// Loading.tsx
+
+import React from 'react';
+import styled, { useTheme } from 'styled-components/native';
+
+// Context
+const LoadingContext = React.createContext<{
+  isLoading: boolean;
+  show: () => void;
+  hide: () => void;
+}>({
+  isLoading: false,
+  show: () => {},
+  hide: () => {},
+});
+
+// Provider
+export const LoadingProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const show = React.useCallback(() => {
+    setIsLoading(true);
+  }, []);
+
+  const hide = React.useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  return (
+    <LoadingContext.Provider value={{ isLoading, show, hide }}>
+      {children}
+    </LoadingContext.Provider>
+  );
+};
+
+// Hook
+export const useLoading = () => {
+  return React.useContext(LoadingContext);
+};
+
+// Styles
+const StLoading = styled.ActivityIndicator`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 9999;
+  background-color: ${({ theme }) => theme.loadingBgColor};
+`;
+
+// Component
+export const LoadingIndicator: React.FC = () => {
+  const theme = useTheme();
+  const { isLoading } = useLoading();
+
+  if (!isLoading) {
+    return null;
+  }
+  return <StLoading size="large" color={theme.loadingTintColor} />;
+};
+```
+
+다음과 같이 렌더링할 컴포넌트 `<LoadingIndicator>`의 배치에 신경쓰자
+
+```tsx
+export default function App() {
+  ...
+
+  return (
+    <RealmProvider>
+      <ThemeProvider theme={defaultTheme}>
+        <LoadingProvider>
+          <NavigationContainer>
+            <StatusBar style="auto" />
+            <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+              <LoadingIndicator />
+              <RootNavigator />
+            </View>
+          </NavigationContainer>
+        </LoadingProvider>
+      </ThemeProvider>
+    </RealmProvider>
+  );
+}
+```
