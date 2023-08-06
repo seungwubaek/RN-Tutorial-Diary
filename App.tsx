@@ -7,7 +7,10 @@ import { MobileAds } from 'react-native-google-mobile-ads';
 import { ThemeProvider } from 'styled-components/native';
 
 // Components
-import Loading, { LoadingProvider } from '~/components/molecules/Loading';
+import {
+  LoadingProvider,
+  LoadingIndicator,
+} from '~/components/molecules/Loading';
 import RootNavigator from '~/navigations/Root';
 
 // DB
@@ -55,8 +58,8 @@ export default function App() {
         <LoadingProvider>
           <NavigationContainer>
             <StatusBar style="auto" />
-            <Loading />
             <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+              <LoadingIndicator />
               <RootNavigator />
             </View>
           </NavigationContainer>

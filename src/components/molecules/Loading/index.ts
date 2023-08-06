@@ -1,2 +1,1 @@
-export { default } from './Loading';
-export { LoadingProvider, useLoading } from './Context';
+export { LoadingProvider, useLoading, LoadingIndicator } from './Loading';

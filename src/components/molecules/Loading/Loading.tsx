@@ -1,25 +1,59 @@
 import React from 'react';
-import styled from 'styled-components/native';
+import styled, { useTheme } from 'styled-components/native';
 
-import { useLoading } from './Context';
+// Context
+const LoadingContext = React.createContext<{
+  isLoading: boolean;
+  show: () => void;
+  hide: () => void;
+}>({
+  isLoading: false,
+  show: () => {},
+  hide: () => {},
+});
 
+// Provider
+export const LoadingProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const show = React.useCallback(() => {
+    setIsLoading(true);
+  }, []);
+
+  const hide = React.useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  return (
+    <LoadingContext.Provider value={{ isLoading, show, hide }}>
+      {children}
+    </LoadingContext.Provider>
+  );
+};
+
+// Hook
+export const useLoading = () => {
+  return React.useContext(LoadingContext);
+};
+
+// Styles
 const StLoading = styled.ActivityIndicator`
   width: 100%;
   height: 100%;
   position: absolute;
-  justify-content: center;
-  align-items: center;
   z-index: 9999;
-  background-color: ${({ theme }) => theme.bgColor};
+  background-color: ${({ theme }) => theme.loadingBgColor};
 `;
 
-const Loading: React.FC<{}> = () => {
+// Component
+export const LoadingIndicator: React.FC = () => {
+  const theme = useTheme();
   const { isLoading } = useLoading();
 
   if (!isLoading) {
     return null;
   }
-  return <StLoading size="large" />;
+  return <StLoading size="large" color={theme.loadingTintColor} />;
 };
-
-export default Loading;
