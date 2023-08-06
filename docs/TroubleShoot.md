@@ -98,3 +98,105 @@ Layout Animation이 재생하는 시점에 활성화된 키보드가 비활성�
 임시로, 위 과정에서 `TextInput`에 입력을 완료한 다음, 키보드를 수동으로 비활성화(내려가는 애니메이션 재생)하자.
 
 키보드 비활성화가 완료되면 `Save` 버튼을 클릭한다. 그러면 Layout Animation이 정상적으로 재생된다.
+
+## Provider 내부의 Rendering 작동안함
+
+아래 코드의 Provider는 내부에 렌더링 해야할 컴포넌트를 가지고 있다.
+
+이때, 만약 `LoadingProvider`가 `<View onLayout...` 컴포넌트 바깥에 위치하면 해당 컴포넌트가 렌더링 되지 않으므로 주의하자.
+Expo Go에서는 정상 작동하는 것 처럼 보이지만, Build 한 APK를 실행했을 때 렌더링 되지 않는다.
+
+### Solved 코드
+
+`LoadingProvider`는 Return 값에 `<LoadingIndicator>` 컴포넌트가 같이 들어있다.
+
+`<LoadingIndicator>`는 다른 child 컴포넌트에서 `useLoading`으로 가져온 `show()`/`hide()` 함수를 이용해서 보이기/숨기기 할 수 있다.
+
+```tsx
+// Loading.tsx
+
+import React from 'react';
+import styled, { useTheme } from 'styled-components/native';
+
+// Context
+const LoadingContext = React.createContext<{
+  isLoading: boolean;
+  show: () => void;
+  hide: () => void;
+}>({
+  isLoading: false,
+  show: () => {},
+  hide: () => {},
+});
+
+// Provider
+export const LoadingProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+  const show = React.useCallback(() => {
+    setIsLoading(true);
+  }, []);
+
+  const hide = React.useCallback(() => {
+    setIsLoading(false);
+  }, []);
+
+  return (
+    <LoadingContext.Provider value={{ isLoading, show, hide }}>
+      <LoadingIndicator isLoading={isLoading} />
+      {children}
+    </LoadingContext.Provider>
+  );
+};
+
+// Hook
+export const useLoading = () => {
+  return React.useContext(LoadingContext);
+};
+
+// Styles
+const StLoading = styled.ActivityIndicator`
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 9999;
+  background-color: ${({ theme }) => theme.loadingBgColor};
+`;
+
+// Component
+const LoadingIndicator: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
+  const theme = useTheme();
+
+  if (!isLoading) {
+    return null;
+  }
+  return <StLoading size="large" color={theme.loadingTintColor} />;
+};
+```
+
+그러나, 아래와 같이 Provider는 `View` 컴포넌트의 내부에 작성하여야 한다.
+
+```tsx
+// App.tsx
+
+export default function App() {
+  ...
+
+  return (
+    <RealmProvider>
+      <ThemeProvider theme={defaultTheme}>
+        <NavigationContainer>
+          <StatusBar style="auto" />
+          <View onLayout={onLayoutRootView} style={{ flex: 1 }}>
+            <LoadingProvider>
+              <RootNavigator />
+            </LoadingProvider>
+          </View>
+        </NavigationContainer>
+      </ThemeProvider>
+    </RealmProvider>
+  );
+}
+```
