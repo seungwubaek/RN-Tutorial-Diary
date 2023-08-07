@@ -22,7 +22,8 @@
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "realm": "^11.10.1",
-    "styled-components": "^6.0.5"
+    "styled-components": "^6.0.5",
+    "expo-updates": "~0.18.11"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

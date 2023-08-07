@@ -8,7 +8,13 @@
       "eas": {
         "projectId": "4e011cc1-fb57-4f99-b8e4-6dfda33f3eee"
       }
-    }
+    },
+    "runtimeVersion": "exposdk:49.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/4e011cc1-fb57-4f99-b8e4-6dfda33f3eee"
+    },
+    "android": {},
+    "ios": {}
   },
   "name": "RN-Tutorial-Diary",
   "react-native-google-mobile-ads": {

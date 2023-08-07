@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">RN-Tutorial-Diary</string>
+  <string name="app_name">RN-Tutorial-Diary</string>
+  <string name="expo_runtime_version">exposdk:49.0.0</string>
 </resources>
